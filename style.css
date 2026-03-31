@@ -339,6 +339,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 12px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 .p-card {
   background: var(--surface2); border: 1px solid var(--border);
@@ -378,6 +381,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
   gap: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 .shop-card {
   background: var(--bg); border: 1px solid var(--border);
@@ -451,8 +457,8 @@ body {
 }
 
 /* ── Table ───────────────────────────────────────────── */
-.table-wrap { overflow-x: auto; }
-.table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; display: block; }
+.table { width: 100%; border-collapse: collapse; font-size: .82rem; margin: 0 !important; white-space: nowrap; }
 .table th {
   padding: 10px 14px; text-align: left;
   font-size: .66rem; font-weight: 700; color: var(--text3);
@@ -470,6 +476,46 @@ body {
 
 .profit-pos  { color: var(--success); font-weight: 700; }
 .profit-zero { color: var(--text3); }
+
+/* DataTables Overrides - Responsive & Modern */
+.dataTables_wrapper {
+  font-size: .85rem; padding-bottom: 12px; width: 100%;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+}
+.dataTables_length { flex: 1; min-width: 140px; margin-bottom: 16px; }
+.dataTables_filter { flex: 1; min-width: 140px; text-align: right; margin-bottom: 16px; }
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+  padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg); font-family: var(--font); color: var(--text); outline: none;
+  font-size: .8rem; margin-left: 6px;
+}
+.dataTables_info { flex: 1; min-width: 250px; color: var(--text2) !important; font-size: .78rem; padding-top: 16px !important; }
+.dataTables_paginate { flex: 1; min-width: 250px; display: flex !important; justify-content: flex-end; align-items: center; gap: 4px; padding-top: 16px !important; margin: 0; }
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 5px 12px !important; margin: 0 !important;
+  border-radius: 6px !important; border: 1px solid transparent !important; background: transparent !important;
+  color: var(--text) !important; cursor: pointer !important; transition: all var(--transition) !important;
+  font-size: .8rem; line-height: 1.2;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text) !important; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { background: var(--black) !important; color: var(--white) !important; border-color: var(--black) !important; font-weight: 700; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled { opacity: .5; pointer-events: none; }
+table.dataTable.no-footer { border-color: var(--border) !important; }
+div.dataTables_scrollBody { border-bottom: none !important; display: block; overflow-x: auto; }
+div.dataTables_scrollHead table.dataTable, div.dataTables_scrollBody table.dataTable { margin: 0 !important; border-bottom: none !important;}
+
+@media (max-width: 580px) {
+  .dataTables_wrapper { flex-direction: column; align-items: stretch; }
+  .dataTables_length, .dataTables_filter { margin-bottom: 12px; min-width: 100%; text-align: left; }
+  .dataTables_length label { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  .dataTables_length select { width: auto; flex-shrink: 0; margin: 0; }
+  .dataTables_filter label { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; }
+  .dataTables_filter input { margin: 0; width: 100%; }
+  .dataTables_paginate { justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  .dataTables_info { text-align: center; margin-top: 8px; }
+}
 
 /* ── Empty state ─────────────────────────────────────── */
 .empty-state { text-align: center; padding: 48px 20px; color: var(--text3); }
@@ -496,9 +542,10 @@ body {
 .toast-container {
   position: fixed; bottom: 20px; right: 20px;
   display: flex; flex-direction: column; gap: 8px;
-  z-index: 999; max-width: 320px;
+  z-index: 999; max-width: 320px; pointer-events: none;
 }
 .toast {
+  pointer-events: auto;
   padding: 12px 16px; border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--white); color: var(--text);
@@ -623,11 +670,19 @@ body {
   border-color: var(--black);
 }
 .filter-custom-row {
-  display: flex; align-items: flex-end; gap: 10px;
-  margin-top: 12px; flex-wrap: wrap;
+  display: flex; align-items: flex-end; gap: 12px;
+  margin-top: 12px; margin-bottom: 2px; flex-wrap: wrap;
+  background: var(--surface2); padding: 12px 14px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
 }
-.filter-custom-row .form-group { flex: 1; min-width: 120px; }
-.filter-custom-row .btn { flex-shrink: 0; }
+.filter-custom-row .form-group { flex: 1; min-width: 140px; margin-bottom: 0; }
+.filter-custom-row .form-group label { margin-bottom: 6px; font-size: .72rem; }
+.filter-custom-row .btn { flex-shrink: 0; height: 38px; padding: 0 18px; margin-top: auto; }
+
+@media (max-width: 450px) {
+  .filter-custom-row .form-group { min-width: 100%; }
+  .filter-custom-row .btn { width: 100%; }
+}
 
 /* ── Chart ───────────────────────────────────────────── */
 .chart-wrap {

@@ -8,8 +8,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>window.jsPDF = window.jspdf.jsPDF;</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- jQuery & DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -53,8 +62,8 @@
       <div class="drawer-logo">🎮 Naya Game Stuff</div>
       <button class="drawer-close" id="drawerClose">✕</button>
     </div>
-    <button class="drawer-nav-btn" data-tab="produk">📦 Produk</button>
     <button class="drawer-nav-btn active" data-tab="transaksi">🛒 Transaksi</button>
+    <button class="drawer-nav-btn" data-tab="produk">📦 Produk</button>
     <button class="drawer-nav-btn" data-tab="riwayat">📊 Riwayat</button>
   </div>
 
@@ -213,6 +222,13 @@
                 <label for="inputBayar">Jumlah Bayar (Rp)</label>
                 <input type="number" id="inputBayar" placeholder="Kosongkan jika pas" min="0" />
               </div>
+              <div class="form-group" style="margin-top:2px">
+                <label>Tanggal Transaksi</label>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnDateToday" style="flex-shrink:0; border: 1px solid var(--border)">Hari Ini</button>
+                  <input type="datetime-local" id="inputTanggalTransaksi" class="date-input" style="flex:1" />
+                </div>
+              </div>
               <div class="summary-row change-row">
                 <span>Kembalian</span>
                 <span id="kembalianVal">Rp 0</span>
@@ -297,7 +313,10 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">📋 Detail Transaksi</h2>
-          <button class="btn btn-danger-outline btn-sm" id="btnHapusRiwayat">Hapus Semua</button>
+          <div class="header-controls">
+            <button class="btn btn-primary btn-sm" id="btnDownloadPdf">⬇ Download PDF</button>
+            <button class="btn btn-danger-outline btn-sm" id="btnHapusRiwayat">Hapus Semua</button>
+          </div>
         </div>
         <div class="table-wrap">
           <table class="table" id="tableRiwayat">

@@ -32,9 +32,8 @@ function respond($data, $code = 200) {
     exit;
 }
 
-function nextId($list) {
-    if (empty($list)) return 1;
-    return max(array_column($list, 'id')) + 1;
+function nextId($prefix) {
+    return $prefix . '_' . round(microtime(true) * 1000) . '_' . rand(100, 999);
 }
 
 // ── GET ──────────────────────────────────────────────────
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'add_produk') {
         $d = $body['data'];
         $item = [
-            'id'         => nextId($db['produk']),
+            'id'         => nextId('prod'),
             'nama'       => trim($d['nama'] ?? ''),
             'kategori'   => trim($d['kategori'] ?? ''),
             'stok'       => (int)($d['stok'] ?? 0),
@@ -82,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ── Produk: Update ──────────────────────────────────
     if ($action === 'update_produk') {
         $d  = $body['data'];
-        $id = (int)($d['id'] ?? 0);
+        $id = (string)($d['id'] ?? '');
         $idx = null;
-        foreach ($db['produk'] as $i => $p) { if ($p['id'] === $id) { $idx = $i; break; } }
+        foreach ($db['produk'] as $i => $p) { if ((string)$p['id'] === $id) { $idx = $i; break; } }
         if ($idx === null) respond(['success' => false, 'message' => 'Produk tidak ditemukan'], 404);
 
         $db['produk'][$idx] = array_merge($db['produk'][$idx], [
@@ -107,9 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── Produk: Delete ──────────────────────────────────
     if ($action === 'delete_produk') {
-        $id = (int)($body['id'] ?? 0);
+        $id = (string)($body['id'] ?? '');
         $idx = null;
-        foreach ($db['produk'] as $i => $p) { if ($p['id'] === $id) { $idx = $i; break; } }
+        foreach ($db['produk'] as $i => $p) { if ((string)$p['id'] === $id) { $idx = $i; break; } }
         if ($idx === null) respond(['success' => false, 'message' => 'Produk tidak ditemukan'], 404);
         $nama = $db['produk'][$idx]['nama'];
         array_splice($db['produk'], $idx, 1);
@@ -141,15 +140,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ── Riwayat: Add ────────────────────────────────────
     if ($action === 'add_riwayat') {
         $entry = $body['data'];
-        $entry['id'] = nextId($db['riwayat']);
+        $entry['id'] = nextId('trx');
 
         // Reduce stock
         if (!empty($entry['items'])) {
             foreach ($entry['items'] as $item) {
-                $pid = (int)($item['produkId'] ?? 0);
+                $pid = (string)($item['produkId'] ?? '');
                 $qty = (int)($item['qty'] ?? 0);
                 foreach ($db['produk'] as $i => $p) {
-                    if ($p['id'] === $pid) {
+                    if ((string)$p['id'] === $pid) {
                         $db['produk'][$i]['stok'] = max(0, $db['produk'][$i]['stok'] - $qty);
                         break;
                     }

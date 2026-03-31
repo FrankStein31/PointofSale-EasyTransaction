@@ -180,9 +180,15 @@ function setupAutocomplete() {
     const val = input.value.trim().toLowerCase();
     dropdown.innerHTML = '';
     if (!val) { dropdown.classList.remove('open'); return; }
-    const matches = pelangganList.filter(n => n.toLowerCase().includes(val));
+
+    const matches = pelangganList.filter(p => {
+      const n = typeof p === 'string' ? p : (p.nama || '');
+      return n.toLowerCase().includes(val);
+    });
+    
     if (matches.length === 0) { dropdown.classList.remove('open'); return; }
-    matches.forEach(name => {
+    matches.forEach(p => {
+      const name = typeof p === 'string' ? p : (p.nama || '');
       const el = document.createElement('div');
       el.className = 'ac-option';
       // Highlight match
@@ -332,7 +338,7 @@ document.getElementById('formProduk').addEventListener('submit', async e => {
   const stok       = parseInt(document.getElementById('stokProduk').value) || 0;
   const hargaJual  = parseInt(document.getElementById('hargaJual').value)  || 0;
   const hargaModal = parseInt(document.getElementById('hargaModal').value) || 0;
-  const editId     = parseInt(document.getElementById('editId').value)     || 0;
+  const editId     = document.getElementById('editId').value.trim();
 
   if (!nama) { toast('Nama produk harus diisi!', 'error'); return; }
   if (!hargaJual) { toast('Harga jual harus diisi!', 'error'); return; }
@@ -340,10 +346,10 @@ document.getElementById('formProduk').addEventListener('submit', async e => {
   setLoading(true);
   try {
     let res;
-    if (editId > 0) {
+    if (editId && editId !== '0' && editId !== '') {
       res = await apiPost({ action: 'update_produk', data: { id: editId, nama, kategori, stok, hargaModal, hargaJual } });
       if (res.success) {
-        const idx = produkList.findIndex(p => p.id === editId);
+        const idx = produkList.findIndex(p => String(p.id) === editId);
         if (idx !== -1) produkList[idx] = res.data;
         if (res.kategori) { kategoriList = res.kategori; renderFilterKategori(); }
         toast(`"${nama}" diperbarui.`, 'info');
@@ -365,7 +371,7 @@ document.getElementById('formProduk').addEventListener('submit', async e => {
 
 function resetForm() {
   document.getElementById('formProduk').reset();
-  document.getElementById('editId').value = 0;
+  document.getElementById('editId').value = '';
   document.getElementById('hargaModal').value = '';
   document.getElementById('formTitleText').textContent = '➕ Tambah Produk';
   document.getElementById('btnSimpan').textContent     = 'Simpan Produk';
@@ -456,11 +462,11 @@ function renderCart() {
         <div class="ci-price">${fmt(p.hargaJual)} × ${item.qty} = ${fmt(sub)}</div>
       </div>
       <div class="ci-qty">
-        <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+        <button class="qty-btn" onclick="changeQty('${p.id}',-1)">−</button>
         <span class="qty-num">${item.qty}</span>
-        <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+        <button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button>
       </div>
-      <button class="ci-remove" onclick="removeFromCart(${p.id})">✕</button>`;
+      <button class="ci-remove" onclick="removeFromCart('${p.id}')">✕</button>`;
     cl.appendChild(el);
   });
 
@@ -534,7 +540,10 @@ document.getElementById('btnBayar').addEventListener('click', async () => {
   const totalUntung = items.reduce((a, i) => a + i.untung, 0);
   const kembalian   = bayar > 0 ? bayar - total : 0;
 
-  const entry = { tanggal: new Date().toISOString(), pembeli, items, total, totalModal, totalUntung, bayar, kembalian };
+  const dVal = document.getElementById('inputTanggalTransaksi').value;
+  const tglT  = dVal ? new Date(dVal).toISOString() : new Date().toISOString();
+
+  const entry = { tanggal: tglT, pembeli, items, total, totalModal, totalUntung, bayar, kembalian };
 
   setLoading(true);
   try {
@@ -551,6 +560,7 @@ document.getElementById('btnBayar').addEventListener('click', async () => {
     applyProdukFilter();
     document.getElementById('namaPembeli').value = '';
     document.getElementById('inputBayar').value  = '';
+    initDateTransaksi();
     updateBadge();
 
     const extra = totalUntung > 0 ? ` · Untung: ${fmt(totalUntung)}` : '';
@@ -724,6 +734,10 @@ document.getElementById('chartType').addEventListener('change', () => {
 
 // ── Render Riwayat ─────────────────────────────────────
 function renderRiwayat() {
+  if ($.fn.DataTable.isDataTable('#tableRiwayat')) {
+    $('#tableRiwayat').DataTable().destroy();
+  }
+
   const tbody = document.getElementById('tbodyRiwayat');
   tbody.innerHTML = '';
 
@@ -780,7 +794,167 @@ function renderRiwayat() {
       <td class="text-muted">${r.kembalian > 0 ? fmt(r.kembalian) : '—'}</td>`;
     tbody.appendChild(tr);
   });
+
+  if (filteredList.length > 0) {
+    $('#tableRiwayat').DataTable({
+      pageLength: 5,
+      lengthMenu: [[5, 15, 20, 50, 100], [5, 15, 20, 50, 100]],
+      order: [],
+      language: {
+        lengthMenu: "Tampil _MENU_ data",
+        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+        infoEmpty: "Data tidak ditemukan",
+        search: "Cari:",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "Lanjut",
+          previous: "Balik"
+        }
+      }
+    });
+
+    const $tbl = $('#tableRiwayat');
+    if (!$tbl.parent().hasClass('table-responsive')) {
+      $tbl.wrap('<div class="table-responsive" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;"></div>');
+    }
+  }
 }
+
+/* ── Download PDF ──────────────────────────────────────── */
+document.getElementById('btnDownloadPdf').addEventListener('click', () => {
+  const filteredList = filterByRange(riwayatList);
+  if (filteredList.length === 0) { toast('Tidak ada data untuk di-download.', 'warn'); return; }
+
+  const jsPDFKlass = window.jsPDF || window.jspdf?.jsPDF;
+  if (!jsPDFKlass) { toast('Penghasil PDF belum dimuat, coba lagi.', 'error'); return; }
+
+  const doc = new jsPDFKlass({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // ── Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(29, 29, 31);
+  doc.text('Naya Game Stuff', 14, 16);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(110, 110, 115);
+
+  const rangeLabels = {
+    all: 'Semua Waktu', today: 'Hari Ini', week: 'Minggu Ini',
+    month: 'Bulan Ini', custom: `${customFrom} s/d ${customTo}`
+  };
+  const periodLabel = rangeLabels[activeFilter] || 'Semua Waktu';
+  const now = new Date();
+  doc.text(`Laporan Riwayat Transaksi  |  Periode: ${periodLabel}  |  Dicetak: ${now.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })} ${now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' })}`, 14, 22);
+
+  // ── Summary
+  const tP = filteredList.reduce((a, r) => a + r.total, 0);
+  const tM = filteredList.reduce((a, r) => a + r.totalModal, 0);
+  const tU = filteredList.reduce((a, r) => a + r.totalUntung, 0);
+
+  const boxY = 28;
+  const boxH = 14;
+  const boxGap = 4;
+  const boxW = (pageW - 28 - boxGap * 3) / 4;
+  const boxes = [
+    { label: 'Pendapatan', value: fmt(tP) },
+    { label: 'Modal', value: fmt(tM) },
+    { label: 'Keuntungan', value: fmt(tU) },
+    { label: 'Transaksi', value: String(filteredList.length) },
+  ];
+
+  boxes.forEach((b, i) => {
+    const x = 14 + i * (boxW + boxGap);
+    doc.setFillColor(245, 245, 247);
+    doc.roundedRect(x, boxY, boxW, boxH, 2, 2, 'F');
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(174, 174, 178);
+    doc.text(b.label.toUpperCase(), x + 4, boxY + 5);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(29, 29, 31);
+    doc.text(b.value, x + 4, boxY + 11);
+  });
+
+  // ── Table
+  const tableData = filteredList.map((r, i) => {
+    const dt = new Date(r.tanggal);
+    const dtStr = dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
+                + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    const items = r.items.map(it => `${it.nama} x${it.qty}`).join(', ');
+    const sign  = r.totalUntung > 0 ? '+' : '';
+    return [
+      i + 1, dtStr, r.pembeli, items,
+      fmt(r.total),
+      r.totalModal > 0 ? fmt(r.totalModal) : '-',
+      sign + fmt(r.totalUntung),
+      r.bayar > 0 ? fmt(r.bayar) : '-',
+      r.kembalian > 0 ? fmt(r.kembalian) : '-',
+    ];
+  });
+
+  doc.autoTable({
+    startY: boxY + boxH + 6,
+    head: [['#', 'Waktu', 'Pembeli', 'Item', 'Total', 'Modal', 'Untung', 'Bayar', 'Kembali']],
+    body: tableData,
+    theme: 'grid',
+    styles: {
+      font: 'helvetica', fontSize: 8, cellPadding: 3,
+      textColor: [29, 29, 31], lineColor: [229, 229, 231], lineWidth: 0.2,
+    },
+    headStyles: {
+      fillColor: [245, 245, 247], textColor: [110, 110, 115],
+      fontStyle: 'bold', fontSize: 7,
+    },
+    alternateRowStyles: { fillColor: [250, 250, 250] },
+    columnStyles: {
+      0: { halign: 'center', cellWidth: 8 },
+      3: { cellWidth: 55 },
+      4: { fontStyle: 'bold' },
+      6: { textColor: [52, 199, 89], fontStyle: 'bold' },
+    },
+    margin: { left: 14, right: 14 },
+    didDrawPage: (data) => {
+      // Footer
+      const pageH = doc.internal.pageSize.getHeight();
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(174, 174, 178);
+      doc.text('Naya Game Stuff — Point of Sale', 14, pageH - 6);
+      doc.text(`Halaman ${doc.internal.getCurrentPageInfo().pageNumber}`, pageW - 14, pageH - 6, { align: 'right' });
+    }
+  });
+  // Save via direct Blob to bypass internal doc.save() silent failures
+  const dateStr = now.toISOString().slice(0, 10);
+  const pdfName = `Riwayat_Transaksi_${dateStr}.pdf`;
+  
+  try {
+    const blob = doc.output('blob');
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, pdfName); // For IE/Edge legacy
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = pdfName;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 500);
+    }
+    toast('PDF berhasil di-download!', 'success');
+  } catch(err) {
+    console.error(err);
+    toast('Gagal mendownload PDF!', 'error');
+  }
+});
 
 document.getElementById('btnHapusRiwayat').addEventListener('click', async () => {
   if (!riwayatList.length) return;
@@ -797,6 +971,13 @@ document.getElementById('btnHapusRiwayat').addEventListener('click', async () =>
 function updateBadge() {
   document.getElementById('riwayatBadge').textContent = riwayatList.length;
 }
+
+function initDateTransaksi() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('inputTanggalTransaksi').value = now.toISOString().slice(0, 16);
+}
+document.getElementById('btnDateToday').addEventListener('click', initDateTransaksi);
 
 /* ══════════════════════════════════════════════════════════
    INIT
@@ -818,6 +999,7 @@ async function init() {
     renderFilterKategori();
     applyProdukFilter();
     renderShopGrid();
+    initDateTransaksi();
     updateBadge();
     setupAutocomplete();
   }

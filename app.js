@@ -560,35 +560,206 @@ document.getElementById('btnBayar').addEventListener('click', async () => {
 });
 
 /* ══════════════════════════════════════════════════════════
-   RIWAYAT
+   RIWAYAT — CHART & FILTERS
 ══════════════════════════════════════════════════════════ */
-function renderRiwayat(filterDate = '') {
+let revenueChart = null;
+let activeFilter = 'all';
+let customFrom   = '';
+let customTo     = '';
+
+// ── Date helpers ───────────────────────────────────────
+function toDateStr(d) { return d.toISOString().slice(0, 10); }
+function startOfDay(d) { const c = new Date(d); c.setHours(0,0,0,0); return c; }
+function endOfDay(d)   { const c = new Date(d); c.setHours(23,59,59,999); return c; }
+
+function getStartOfWeek(d) {
+  const c = new Date(d); c.setHours(0,0,0,0);
+  const day = c.getDay(); // 0=Sun
+  c.setDate(c.getDate() - (day === 0 ? 6 : day - 1)); // Monday start
+  return c;
+}
+function getStartOfMonth(d) {
+  const c = new Date(d); c.setHours(0,0,0,0); c.setDate(1); return c;
+}
+
+function filterByRange(list) {
+  const now = new Date();
+  if (activeFilter === 'all') return [...list];
+  if (activeFilter === 'today') {
+    const s = startOfDay(now), e = endOfDay(now);
+    return list.filter(r => { const d = new Date(r.tanggal); return d >= s && d <= e; });
+  }
+  if (activeFilter === 'week') {
+    const s = getStartOfWeek(now), e = endOfDay(now);
+    return list.filter(r => { const d = new Date(r.tanggal); return d >= s && d <= e; });
+  }
+  if (activeFilter === 'month') {
+    const s = getStartOfMonth(now), e = endOfDay(now);
+    return list.filter(r => { const d = new Date(r.tanggal); return d >= s && d <= e; });
+  }
+  if (activeFilter === 'custom' && customFrom && customTo) {
+    const s = startOfDay(new Date(customFrom));
+    const e = endOfDay(new Date(customTo));
+    return list.filter(r => { const d = new Date(r.tanggal); return d >= s && d <= e; });
+  }
+  return [...list];
+}
+
+// ── Filter pills ───────────────────────────────────────
+document.querySelectorAll('.pill-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    activeFilter = f;
+    const customRow = document.getElementById('filterCustomRow');
+    if (f === 'custom') {
+      customRow.style.display = 'flex';
+    } else {
+      customRow.style.display = 'none';
+      renderRiwayat();
+    }
+  });
+});
+document.getElementById('btnApplyCustom').addEventListener('click', () => {
+  customFrom = document.getElementById('filterDateFrom').value;
+  customTo   = document.getElementById('filterDateTo').value;
+  if (!customFrom || !customTo) { toast('Pilih tanggal dari & sampai.', 'warn'); return; }
+  if (customFrom > customTo)    { toast('Tanggal "dari" harus sebelum "sampai".', 'error'); return; }
+  renderRiwayat();
+});
+
+// ── Chart ──────────────────────────────────────────────
+function buildChartData(filteredList) {
+  // Group by date
+  const map = {};
+  filteredList.forEach(r => {
+    const key = new Date(r.tanggal).toLocaleDateString('id-ID', { day:'2-digit', month:'short' });
+    if (!map[key]) map[key] = { revenue: 0, profit: 0, count: 0 };
+    map[key].revenue += r.total;
+    map[key].profit  += r.totalUntung;
+    map[key].count   += 1;
+  });
+  const labels = Object.keys(map);
+  return {
+    labels,
+    revenue: labels.map(l => map[l].revenue),
+    profit:  labels.map(l => map[l].profit),
+    count:   labels.map(l => map[l].count),
+  };
+}
+
+function renderChart(filteredList) {
+  const ctx = document.getElementById('revenueChart');
+  if (!ctx) return;
+  const data = buildChartData(filteredList);
+  const type = document.getElementById('chartType').value;
+
+  const labelMap  = { revenue: 'Pendapatan', profit: 'Keuntungan', count: 'Transaksi' };
+  const colorMap  = { revenue: '#1d1d1f', profit: '#34c759', count: '#6e6e73' };
+  const bgMap     = { revenue: 'rgba(29,29,31,.08)', profit: 'rgba(52,199,89,.1)', count: 'rgba(110,110,115,.08)' };
+
+  const dataset = {
+    label: labelMap[type],
+    data: data[type],
+    borderColor: colorMap[type],
+    backgroundColor: bgMap[type],
+    borderWidth: 2,
+    fill: true,
+    tension: .35,
+    pointRadius: data.labels.length <= 14 ? 4 : 2,
+    pointBackgroundColor: colorMap[type],
+    pointHoverRadius: 6,
+  };
+
+  if (revenueChart) revenueChart.destroy();
+  revenueChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: data.labels, datasets: [dataset] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1d1d1f',
+          titleFont: { family: 'Inter', weight: '700', size: 12 },
+          bodyFont: { family: 'Inter', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: (ctx) => {
+              const v = ctx.parsed.y;
+              return type === 'count' ? `${v} transaksi` : fmt(v);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#aeaeb2' },
+          border: { display: false },
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,.04)' },
+          ticks: {
+            font: { family: 'Inter', size: 11 }, color: '#aeaeb2',
+            callback: v => type === 'count' ? v : (v >= 1000000 ? (v/1000000).toFixed(1)+'jt' : v >= 1000 ? (v/1000)+'rb' : v)
+          },
+          border: { display: false },
+        }
+      }
+    }
+  });
+}
+
+document.getElementById('chartType').addEventListener('change', () => {
+  const filteredList = filterByRange(riwayatList);
+  renderChart(filteredList);
+});
+
+// ── Render Riwayat ─────────────────────────────────────
+function renderRiwayat() {
   const tbody = document.getElementById('tbodyRiwayat');
   tbody.innerHTML = '';
 
-  let list = [...riwayatList];
-  if (filterDate) list = list.filter(r => r.tanggal.startsWith(filterDate));
+  const filteredList = filterByRange(riwayatList);
 
-  // summary (always all data, not filtered)
-  const tP = riwayatList.reduce((a, r) => a + r.total, 0);
-  const tM = riwayatList.reduce((a, r) => a + r.totalModal, 0);
-  const tU = riwayatList.reduce((a, r) => a + r.totalUntung, 0);
+  // Stats based on filter
+  const tP = filteredList.reduce((a, r) => a + r.total, 0);
+  const tM = filteredList.reduce((a, r) => a + r.totalModal, 0);
+  const tU = filteredList.reduce((a, r) => a + r.totalUntung, 0);
   document.getElementById('totalPendapatan').textContent = fmt(tP);
   document.getElementById('totalModal').textContent      = fmt(tM);
   document.getElementById('totalUntung').textContent     = fmt(tU);
-  document.getElementById('totalTransaksi').textContent  = riwayatList.length;
+  document.getElementById('totalTransaksi').textContent  = filteredList.length;
   updateBadge();
 
-  if (list.length === 0) {
+  // Label
+  const rangeLabels = {
+    all: 'Pendapatan', today: 'Hari Ini', week: 'Minggu Ini',
+    month: 'Bulan Ini', custom: 'Rentang Dipilih'
+  };
+  document.getElementById('statsRangeLabel').textContent = rangeLabels[activeFilter] || 'Pendapatan';
+
+  // Chart
+  renderChart(filteredList);
+
+  // Table
+  if (filteredList.length === 0) {
     tbody.innerHTML = `<tr><td colspan="9">
       <div class="empty-state sm">
         <div class="empty-icon">📊</div>
-        <p>${filterDate ? 'Tidak ada transaksi tanggal ini.' : 'Belum ada transaksi.'}</p>
+        <p>Tidak ada transaksi pada periode ini.</p>
       </div></td></tr>`;
     return;
   }
 
-  list.forEach((r, i) => {
+  filteredList.forEach((r, i) => {
     const dt    = new Date(r.tanggal);
     const dtStr = dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
                 + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
@@ -611,11 +782,6 @@ function renderRiwayat(filterDate = '') {
   });
 }
 
-document.getElementById('filterTanggal').addEventListener('change', e => renderRiwayat(e.target.value));
-document.getElementById('btnResetFilter').addEventListener('click', () => {
-  document.getElementById('filterTanggal').value = '';
-  renderRiwayat();
-});
 document.getElementById('btnHapusRiwayat').addEventListener('click', async () => {
   if (!riwayatList.length) return;
   const ok = await confirmModal('Hapus Semua', 'Semua riwayat transaksi akan dihapus permanen.');

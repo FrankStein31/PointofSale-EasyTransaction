@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -231,9 +232,32 @@
         <p>Pantau pendapatan dan keuntungan.</p>
       </div>
 
+      <!-- Filter pills -->
+      <div class="filter-bar" id="filterBar">
+        <div class="filter-pills">
+          <button class="pill-btn active" data-filter="all" id="fAll">Semua</button>
+          <button class="pill-btn" data-filter="today" id="fToday">Hari Ini</button>
+          <button class="pill-btn" data-filter="week" id="fWeek">Minggu Ini</button>
+          <button class="pill-btn" data-filter="month" id="fMonth">Bulan Ini</button>
+          <button class="pill-btn" data-filter="custom" id="fCustom">Tanggal…</button>
+        </div>
+        <div class="filter-custom-row" id="filterCustomRow" style="display:none">
+          <div class="form-group">
+            <label for="filterDateFrom">Dari</label>
+            <input type="date" id="filterDateFrom" class="date-input" />
+          </div>
+          <div class="form-group">
+            <label for="filterDateTo">Sampai</label>
+            <input type="date" id="filterDateTo" class="date-input" />
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnApplyCustom">Terapkan</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-label">Pendapatan</div>
+          <div class="stat-label" id="statsRangeLabel">Pendapatan</div>
           <div class="stat-value" id="totalPendapatan">—</div>
         </div>
         <div class="stat-card">
@@ -250,14 +274,30 @@
         </div>
       </div>
 
+      <!-- Chart -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">📋 Semua Transaksi</h2>
+          <h2 class="card-title">📈 Grafik Pendapatan</h2>
           <div class="header-controls">
-            <input type="date" id="filterTanggal" class="date-input" title="Filter tanggal" />
-            <button class="btn btn-ghost btn-sm" id="btnResetFilter">Reset</button>
-            <button class="btn btn-danger-outline btn-sm" id="btnHapusRiwayat">Hapus Semua</button>
+            <select id="chartType" class="filter-select">
+              <option value="revenue">Pendapatan</option>
+              <option value="profit">Keuntungan</option>
+              <option value="count">Jumlah Transaksi</option>
+            </select>
           </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📋 Detail Transaksi</h2>
+          <button class="btn btn-danger-outline btn-sm" id="btnHapusRiwayat">Hapus Semua</button>
         </div>
         <div class="table-wrap">
           <table class="table" id="tableRiwayat">

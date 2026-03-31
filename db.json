@@ -1,8 +1,74 @@
 {
     "kategori": [
-        "Mobile Legend"
+        "Mobile Legend",
+        "Roblox"
     ],
-    "pelanggan": [],
-    "produk": [],
-    "riwayat": []
+    "pelanggan": [
+        "Tes Chart",
+        "Budi"
+    ],
+    "produk": [
+        {
+            "id": 1,
+            "nama": "Diamond ML 86",
+            "kategori": "Mobile Legend",
+            "stok": 99,
+            "hargaModal": 15000,
+            "hargaJual": 20000
+        },
+        {
+            "id": 2,
+            "nama": "Robux 400",
+            "kategori": "Roblox",
+            "stok": 49,
+            "hargaModal": 80000,
+            "hargaJual": 100000
+        }
+    ],
+    "riwayat": [
+        {
+            "tanggal": "2026-03-31T10:49:29.356Z",
+            "pembeli": "Budi",
+            "items": [
+                {
+                    "produkId": 2,
+                    "nama": "Robux 400",
+                    "qty": 1,
+                    "hargaJual": 100000,
+                    "hargaModal": 80000,
+                    "subtotal": 100000,
+                    "modal": 80000,
+                    "untung": 20000
+                }
+            ],
+            "total": 100000,
+            "totalModal": 80000,
+            "totalUntung": 20000,
+            "bayar": 0,
+            "kembalian": 0,
+            "id": 2
+        },
+        {
+            "tanggal": "2026-03-31T10:49:05.257Z",
+            "pembeli": "Tes Chart",
+            "items": [
+                {
+                    "produkId": 1,
+                    "nama": "Diamond ML 86",
+                    "qty": 1,
+                    "hargaJual": 20000,
+                    "hargaModal": 15000,
+                    "subtotal": 20000,
+                    "modal": 15000,
+                    "untung": 5000
+                }
+            ],
+            "total": 20000,
+            "totalModal": 15000,
+            "totalUntung": 5000,
+            "bayar": 0,
+            "kembalian": 0,
+            "id": 1
+        }
+    ]
 }

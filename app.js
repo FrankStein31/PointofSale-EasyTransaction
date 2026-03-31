@@ -651,6 +651,7 @@ async function init() {
     renderKategoriDropdown(document.getElementById('kategoriProduk'));
     renderFilterKategori();
     applyProdukFilter();
+    renderShopGrid();
     updateBadge();
     setupAutocomplete();
   }

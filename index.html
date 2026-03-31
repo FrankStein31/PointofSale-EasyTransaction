@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Stuff — Point of Sale</title>
+  <title>Naya Game Stuff — Point of Sale</title>
   <meta name="description" content="Aplikasi kasir produk game. Kelola stok, proses transaksi, dan pantau keuntungan." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,16 +23,16 @@
       <div class="logo">
         <div class="logo-icon">🎮</div>
         <div>
-          <span class="logo-title">Game Stuff</span>
+          <span class="logo-title">Naya Game Stuff</span>
           <span class="logo-sub">Point of Sale</span>
         </div>
       </div>
       <nav class="nav" id="mainNav">
-        <button class="nav-btn active" data-tab="produk" id="navProduk">
-          <span class="nav-ico">📦</span> Produk
-        </button>
-        <button class="nav-btn" data-tab="transaksi" id="navTransaksi">
+        <button class="nav-btn active" data-tab="transaksi" id="navTransaksi">
           <span class="nav-ico">🛒</span> Transaksi
+        </button>
+        <button class="nav-btn" data-tab="produk" id="navProduk">
+          <span class="nav-ico">📦</span> Produk
         </button>
         <button class="nav-btn" data-tab="riwayat" id="navRiwayat">
           <span class="nav-ico">📊</span> Riwayat
@@ -49,11 +49,11 @@
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <div class="drawer" id="drawer">
     <div class="drawer-head">
-      <div class="drawer-logo">🎮 Game Stuff</div>
+      <div class="drawer-logo">🎮 Naya Game Stuff</div>
       <button class="drawer-close" id="drawerClose">✕</button>
     </div>
-    <button class="drawer-nav-btn active" data-tab="produk">📦 Produk</button>
-    <button class="drawer-nav-btn" data-tab="transaksi">🛒 Transaksi</button>
+    <button class="drawer-nav-btn" data-tab="produk">📦 Produk</button>
+    <button class="drawer-nav-btn active" data-tab="transaksi">🛒 Transaksi</button>
     <button class="drawer-nav-btn" data-tab="riwayat">📊 Riwayat</button>
   </div>
 
@@ -61,7 +61,7 @@
   <main class="main">
 
     <!-- ════════════════ TAB: PRODUK ════════════════ -->
-    <section class="tab-section active" id="tabProduk">
+    <section class="tab-section" id="tabProduk">
 
       <div class="page-heading">
         <h1>Daftar Produk</h1>
@@ -152,7 +152,7 @@
     </section>
 
     <!-- ════════════════ TAB: TRANSAKSI ════════════════ -->
-    <section class="tab-section" id="tabTransaksi">
+    <section class="tab-section active" id="tabTransaksi">
 
       <div class="page-heading">
         <h1>Kasir</h1>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Stuff — Point of Sale</title>
+  <meta name="description" content="Aplikasi kasir produk game. Kelola stok, proses transaksi, dan pantau keuntungan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🎮</div>
+        <div>
+          <span class="logo-title">Game Stuff</span>
+          <span class="logo-sub">Point of Sale</span>
+        </div>
+      </div>
+      <nav class="nav" id="mainNav">
+        <button class="nav-btn active" data-tab="produk">
+          <span class="nav-icon">📦</span> Produk
+        </button>
+        <button class="nav-btn" data-tab="transaksi">
+          <span class="nav-icon">🛒</span> Transaksi
+        </button>
+        <button class="nav-btn" data-tab="riwayat">
+          <span class="nav-icon">📊</span> Riwayat
+          <span class="badge" id="riwayatBadge">0</span>
+        </button>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" id="drawerClose">✕</button>
+    <div class="drawer-logo">🎮 Game Stuff</div>
+    <button class="drawer-nav-btn active" data-tab="produk">📦 Produk</button>
+    <button class="drawer-nav-btn" data-tab="transaksi">🛒 Transaksi</button>
+    <button class="drawer-nav-btn" data-tab="riwayat">📊 Riwayat</button>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- ════════════════ TAB: PRODUK ════════════════ -->
+    <section class="tab-section active" id="tabProduk">
+
+      <div class="page-heading">
+        <h1>Daftar Produk</h1>
+        <p>Kelola produk, stok, dan harga jual.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Produk</div>
+          <div class="stat-value sub" id="totalProdukVal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Stok</div>
+          <div class="stat-value sub" id="totalStokVal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Nilai Inventory</div>
+          <div class="stat-value sub" id="nilaiInventoryVal">—</div>
+        </div>
+      </div>
+
+      <!-- Form Tambah / Edit Produk -->
+      <div class="card" id="cardTambahProduk">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span class="title-icon">+</span>
+            <span id="formTitleText">Tambah Produk</span>
+          </h2>
+        </div>
+        <div class="card-body">
+          <form class="form-grid" id="formProduk" autocomplete="off">
+            <input type="hidden" id="editId" value="0" />
+
+            <div class="form-group" style="grid-column:1/-1">
+              <label for="namaProduk">Nama Produk</label>
+              <input type="text" id="namaProduk" placeholder="Contoh: Diamond ML 86+5, UC PUBG 60…" required />
+            </div>
+
+            <div class="form-group">
+              <label for="stokProduk">Stok</label>
+              <input type="number" id="stokProduk" placeholder="0" min="0" required />
+            </div>
+
+            <div class="form-group">
+              <label for="hargaJual">Harga Jual (Rp)</label>
+              <input type="number" id="hargaJual" placeholder="0" min="0" required />
+            </div>
+
+            <div class="form-group">
+              <label for="hargaModal">Harga Modal (Rp) <span class="text-muted" style="font-weight:400;text-transform:none;letter-spacing:0">— opsional</span></label>
+              <input type="number" id="hargaModal" placeholder="0 (kosongkan jika tidak ada)" min="0" />
+            </div>
+
+            <div class="form-hint">
+              Harga modal opsional — hanya untuk menghitung margin keuntungan.
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="btnSimpan">+ Simpan Produk</button>
+              <button type="button" class="btn btn-ghost" id="btnBatal" style="display:none">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Daftar Produk -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span class="title-icon">≡</span> Semua Produk</h2>
+          <div class="search-wrap">
+            <span class="search-ico">⌕</span>
+            <input type="text" id="searchProduk" class="search-input" placeholder="Cari produk…" />
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="tableProduk">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama Produk</th>
+                <th>Stok</th>
+                <th>Harga Modal</th>
+                <th>Harga Jual</th>
+                <th>Margin</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyProduk"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ TAB: TRANSAKSI ════════════════ -->
+    <section class="tab-section" id="tabTransaksi">
+
+      <div class="page-heading">
+        <h1>Transaksi</h1>
+        <p>Pilih produk dan proses pembayaran.</p>
+      </div>
+
+      <div class="transaksi-layout">
+
+        <!-- Panel kiri: pilih produk -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title"><span class="title-icon">□</span> Pilih Produk</h2>
+              <div class="search-wrap">
+                <span class="search-ico">⌕</span>
+                <input type="text" id="searchTransaksi" class="search-input" placeholder="Cari produk…" />
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="product-grid" id="productGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel kanan: keranjang -->
+        <div class="transaksi-right">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title"><span class="title-icon">🛒</span> Keranjang</h2>
+              <button class="btn btn-ghost btn-sm" id="btnClearCart">Kosongkan</button>
+            </div>
+
+            <div class="cart-list" id="cartList">
+              <div class="empty-state" style="padding:32px 20px">
+                <div class="empty-icon" style="font-size:1.8rem">🛒</div>
+                <p>Keranjang kosong</p>
+              </div>
+            </div>
+
+            <div class="cart-summary">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">Rp 0</span>
+              </div>
+              <div class="summary-row summary-total">
+                <span>Total</span>
+                <strong id="cartTotal">Rp 0</strong>
+              </div>
+            </div>
+
+            <div class="bayar-form">
+              <div class="form-group">
+                <label for="namaPembeli">Nama Pembeli</label>
+                <input type="text" id="namaPembeli" placeholder="Anonim" />
+              </div>
+              <div class="form-group">
+                <label for="inputBayar">Jumlah Bayar (Rp)</label>
+                <input type="number" id="inputBayar" placeholder="Kosongkan jika pas" min="0" />
+              </div>
+              <div class="summary-row kembalian-row">
+                <span style="font-size:.82rem;color:var(--text3)">Kembalian</span>
+                <span id="kembalianVal" style="font-size:.9rem;font-weight:700">Rp 0</span>
+              </div>
+              <button class="btn btn-success" id="btnBayar">✓ Proses Transaksi</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════ TAB: RIWAYAT ════════════════ -->
+    <section class="tab-section" id="tabRiwayat">
+
+      <div class="page-heading">
+        <h1>Riwayat Transaksi</h1>
+        <p>Pantau pendapatan dan keuntungan.</p>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Pendapatan</div>
+          <div class="stat-value sub" id="totalPendapatan">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Modal</div>
+          <div class="stat-value sub" id="totalModal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Keuntungan Bersih</div>
+          <div class="stat-value sub" id="totalUntung">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Jumlah Transaksi</div>
+          <div class="stat-value sub" id="totalTransaksi">—</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span class="title-icon">≡</span> Semua Transaksi</h2>
+          <div class="riwayat-controls">
+            <input type="date" id="filterTanggal" class="date-input" title="Filter tanggal" />
+            <button class="btn btn-ghost btn-sm" id="btnResetFilter">Reset</button>
+            <button class="btn btn-danger btn-sm" id="btnHapusRiwayat">✕ Hapus Semua</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="tableRiwayat">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tanggal & Waktu</th>
+                <th>Pembeli</th>
+                <th>Item Dibeli</th>
+                <th>Total Jual</th>
+                <th>Modal</th>
+                <th>Untung</th>
+                <th>Bayar</th>
+                <th>Kembalian</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRiwayat"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-icon" id="modalIcon">?</div>
+      <h3 class="modal-title" id="modalTitle">Konfirmasi</h3>
+      <p class="modal-msg" id="modalMsg">Yakin?</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCancel">Batal</button>
+        <button class="btn btn-outline" id="modalConfirm">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "produk": [
+    { "id": 1, "nama": "Diamond ML 86+5", "stok": 50, "hargaModal": 0, "hargaJual": 22000 },
+    { "id": 2, "nama": "Diamond ML 172+12", "stok": 30, "hargaModal": 0, "hargaJual": 42000 },
+    { "id": 3, "nama": "Diamond ML 344+25", "stok": 20, "hargaModal": 0, "hargaJual": 80000 },
+    { "id": 4, "nama": "UC PUBG 60", "stok": 40, "hargaModal": 0, "hargaJual": 16000 },
+    { "id": 5, "nama": "UC PUBG 300+25", "stok": 25, "hargaModal": 0, "hargaJual": 75000 },
+    { "id": 6, "nama": "Voucher FF 70 Diamond", "stok": 60, "hargaModal": 0, "hargaJual": 17500 }
+  ],
+  "riwayat": []
+}

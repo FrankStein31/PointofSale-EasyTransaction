@@ -7,18 +7,18 @@
   <meta name="description" content="Aplikasi kasir produk game. Kelola stok, proses transaksi, dan pantau keuntungan." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Loading Overlay -->
+  <!-- Loading -->
   <div class="loading-overlay hidden" id="loadingOverlay">
     <div class="loading-spinner"></div>
   </div>
 
   <!-- ===== HEADER ===== -->
-  <header class="header">
+  <header class="header" id="appHeader">
     <div class="header-inner">
       <div class="logo">
         <div class="logo-icon">🎮</div>
@@ -28,18 +28,18 @@
         </div>
       </div>
       <nav class="nav" id="mainNav">
-        <button class="nav-btn active" data-tab="produk">
-          <span class="nav-icon">📦</span> Produk
+        <button class="nav-btn active" data-tab="produk" id="navProduk">
+          <span class="nav-ico">📦</span> Produk
         </button>
-        <button class="nav-btn" data-tab="transaksi">
-          <span class="nav-icon">🛒</span> Transaksi
+        <button class="nav-btn" data-tab="transaksi" id="navTransaksi">
+          <span class="nav-ico">🛒</span> Transaksi
         </button>
-        <button class="nav-btn" data-tab="riwayat">
-          <span class="nav-icon">📊</span> Riwayat
+        <button class="nav-btn" data-tab="riwayat" id="navRiwayat">
+          <span class="nav-ico">📊</span> Riwayat
           <span class="badge" id="riwayatBadge">0</span>
         </button>
       </nav>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -48,8 +48,10 @@
   <!-- Mobile Drawer -->
   <div class="drawer-overlay" id="drawerOverlay"></div>
   <div class="drawer" id="drawer">
-    <button class="drawer-close" id="drawerClose">✕</button>
-    <div class="drawer-logo">🎮 Game Stuff</div>
+    <div class="drawer-head">
+      <div class="drawer-logo">🎮 Game Stuff</div>
+      <button class="drawer-close" id="drawerClose">✕</button>
+    </div>
     <button class="drawer-nav-btn active" data-tab="produk">📦 Produk</button>
     <button class="drawer-nav-btn" data-tab="transaksi">🛒 Transaksi</button>
     <button class="drawer-nav-btn" data-tab="riwayat">📊 Riwayat</button>
@@ -63,40 +65,46 @@
 
       <div class="page-heading">
         <h1>Daftar Produk</h1>
-        <p>Kelola produk, stok, dan harga jual.</p>
+        <p>Kelola produk, stok, dan harga jual. Klik produk untuk edit atau hapus.</p>
       </div>
 
       <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-label">Total Produk</div>
-          <div class="stat-value sub" id="totalProdukVal">—</div>
+          <div class="stat-value" id="totalProdukVal">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Total Stok</div>
-          <div class="stat-value sub" id="totalStokVal">—</div>
+          <div class="stat-value" id="totalStokVal">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Nilai Inventory</div>
-          <div class="stat-value sub" id="nilaiInventoryVal">—</div>
+          <div class="stat-value" id="nilaiInventoryVal">—</div>
         </div>
       </div>
 
       <!-- Form Tambah / Edit Produk -->
-      <div class="card" id="cardTambahProduk">
+      <div class="card" id="cardFormProduk">
         <div class="card-header">
-          <h2 class="card-title">
-            <span class="title-icon">+</span>
-            <span id="formTitleText">Tambah Produk</span>
-          </h2>
+          <h2 class="card-title" id="formTitleText">➕ Tambah Produk</h2>
         </div>
         <div class="card-body">
           <form class="form-grid" id="formProduk" autocomplete="off">
             <input type="hidden" id="editId" value="0" />
 
-            <div class="form-group" style="grid-column:1/-1">
+            <div class="form-group col-full">
               <label for="namaProduk">Nama Produk</label>
-              <input type="text" id="namaProduk" placeholder="Contoh: Diamond ML 86+5, UC PUBG 60…" required />
+              <input type="text" id="namaProduk" placeholder="Contoh: Diamond ML 86, Robux 400…" required />
+            </div>
+
+            <div class="form-group">
+              <label for="kategoriProduk">Kategori</label>
+              <div class="select-combo" id="kategoriCombo">
+                <select id="kategoriProduk">
+                  <option value="">Pilih kategori…</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-group">
@@ -110,120 +118,108 @@
             </div>
 
             <div class="form-group">
-              <label for="hargaModal">Harga Modal (Rp) <span class="text-muted" style="font-weight:400;text-transform:none;letter-spacing:0">— opsional</span></label>
-              <input type="number" id="hargaModal" placeholder="0 (kosongkan jika tidak ada)" min="0" />
+              <label for="hargaModal">Harga Modal <span class="label-hint">— opsional</span></label>
+              <input type="number" id="hargaModal" placeholder="Kosongkan jika tidak ada" min="0" />
             </div>
 
-            <div class="form-hint">
-              Harga modal opsional — hanya untuk menghitung margin keuntungan.
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary" id="btnSimpan">+ Simpan Produk</button>
+            <div class="form-actions col-full">
+              <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan Produk</button>
               <button type="button" class="btn btn-ghost" id="btnBatal" style="display:none">Batal</button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- Daftar Produk -->
+      <!-- Filter + Grid Produk -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title"><span class="title-icon">≡</span> Semua Produk</h2>
-          <div class="search-wrap">
-            <span class="search-ico">⌕</span>
-            <input type="text" id="searchProduk" class="search-input" placeholder="Cari produk…" />
+          <h2 class="card-title">📋 Semua Produk</h2>
+          <div class="header-controls">
+            <select id="filterKategori" class="filter-select">
+              <option value="">Semua Kategori</option>
+            </select>
+            <div class="search-wrap">
+              <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input type="text" id="searchProduk" class="search-input" placeholder="Cari produk…" />
+            </div>
           </div>
         </div>
-        <div class="table-wrap">
-          <table class="table" id="tableProduk">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nama Produk</th>
-                <th>Stok</th>
-                <th>Harga Modal</th>
-                <th>Harga Jual</th>
-                <th>Margin</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyProduk"></tbody>
-          </table>
+        <div class="card-body">
+          <div class="product-list" id="produkGrid"></div>
         </div>
       </div>
+
     </section>
 
     <!-- ════════════════ TAB: TRANSAKSI ════════════════ -->
     <section class="tab-section" id="tabTransaksi">
 
       <div class="page-heading">
-        <h1>Transaksi</h1>
-        <p>Pilih produk dan proses pembayaran.</p>
+        <h1>Kasir</h1>
+        <p>Pilih produk, isi jumlah, dan proses pembayaran.</p>
       </div>
 
       <div class="transaksi-layout">
-
-        <!-- Panel kiri: pilih produk -->
+        <!-- Kiri: pilih produk -->
         <div>
           <div class="card">
             <div class="card-header">
-              <h2 class="card-title"><span class="title-icon">□</span> Pilih Produk</h2>
+              <h2 class="card-title">🎯 Pilih Produk</h2>
               <div class="search-wrap">
-                <span class="search-ico">⌕</span>
-                <input type="text" id="searchTransaksi" class="search-input" placeholder="Cari produk…" />
+                <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" id="searchTransaksi" class="search-input" placeholder="Cari…" />
               </div>
             </div>
             <div class="card-body">
-              <div class="product-grid" id="productGrid"></div>
+              <div class="shop-grid" id="shopGrid"></div>
             </div>
           </div>
         </div>
 
-        <!-- Panel kanan: keranjang -->
-        <div class="transaksi-right">
-          <div class="card">
+        <!-- Kanan: keranjang -->
+        <div class="cart-sidebar" id="cartSidebar">
+          <div class="card cart-card">
             <div class="card-header">
-              <h2 class="card-title"><span class="title-icon">🛒</span> Keranjang</h2>
+              <h2 class="card-title">🛒 Keranjang</h2>
               <button class="btn btn-ghost btn-sm" id="btnClearCart">Kosongkan</button>
             </div>
 
             <div class="cart-list" id="cartList">
-              <div class="empty-state" style="padding:32px 20px">
-                <div class="empty-icon" style="font-size:1.8rem">🛒</div>
+              <div class="empty-state sm">
+                <div class="empty-icon">🛒</div>
                 <p>Keranjang kosong</p>
               </div>
             </div>
 
             <div class="cart-summary">
               <div class="summary-row">
-                <span>Subtotal</span>
-                <span id="cartSubtotal">Rp 0</span>
+                <span>Subtotal</span> <span id="cartSubtotal">Rp 0</span>
               </div>
-              <div class="summary-row summary-total">
-                <span>Total</span>
-                <strong id="cartTotal">Rp 0</strong>
+              <div class="summary-row total-row">
+                <span>Total</span> <strong id="cartTotal">Rp 0</strong>
               </div>
             </div>
 
-            <div class="bayar-form">
+            <div class="cart-pay">
               <div class="form-group">
                 <label for="namaPembeli">Nama Pembeli</label>
-                <input type="text" id="namaPembeli" placeholder="Anonim" />
+                <div class="autocomplete-wrap" id="pembeliAutocomplete">
+                  <input type="text" id="namaPembeli" placeholder="Ketik nama…" autocomplete="off" />
+                  <div class="ac-dropdown" id="pembeliDropdown"></div>
+                </div>
               </div>
               <div class="form-group">
                 <label for="inputBayar">Jumlah Bayar (Rp)</label>
                 <input type="number" id="inputBayar" placeholder="Kosongkan jika pas" min="0" />
               </div>
-              <div class="summary-row kembalian-row">
-                <span style="font-size:.82rem;color:var(--text3)">Kembalian</span>
-                <span id="kembalianVal" style="font-size:.9rem;font-weight:700">Rp 0</span>
+              <div class="summary-row change-row">
+                <span>Kembalian</span>
+                <span id="kembalianVal">Rp 0</span>
               </div>
-              <button class="btn btn-success" id="btnBayar">✓ Proses Transaksi</button>
+              <button class="btn btn-primary btn-full" id="btnBayar">✓ Proses Transaksi</button>
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -235,34 +231,32 @@
         <p>Pantau pendapatan dan keuntungan.</p>
       </div>
 
-      <!-- Summary stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-label">Total Pendapatan</div>
-          <div class="stat-value sub" id="totalPendapatan">—</div>
+          <div class="stat-label">Pendapatan</div>
+          <div class="stat-value" id="totalPendapatan">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Total Modal</div>
-          <div class="stat-value sub" id="totalModal">—</div>
+          <div class="stat-label">Modal</div>
+          <div class="stat-value" id="totalModal">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Keuntungan Bersih</div>
-          <div class="stat-value sub" id="totalUntung">—</div>
+          <div class="stat-label">Keuntungan</div>
+          <div class="stat-value accent" id="totalUntung">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Jumlah Transaksi</div>
-          <div class="stat-value sub" id="totalTransaksi">—</div>
+          <div class="stat-label">Transaksi</div>
+          <div class="stat-value" id="totalTransaksi">—</div>
         </div>
       </div>
 
-      <!-- Table -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title"><span class="title-icon">≡</span> Semua Transaksi</h2>
-          <div class="riwayat-controls">
+          <h2 class="card-title">📋 Semua Transaksi</h2>
+          <div class="header-controls">
             <input type="date" id="filterTanggal" class="date-input" title="Filter tanggal" />
             <button class="btn btn-ghost btn-sm" id="btnResetFilter">Reset</button>
-            <button class="btn btn-danger btn-sm" id="btnHapusRiwayat">✕ Hapus Semua</button>
+            <button class="btn btn-danger-outline btn-sm" id="btnHapusRiwayat">Hapus Semua</button>
           </div>
         </div>
         <div class="table-wrap">
@@ -270,14 +264,14 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Tanggal & Waktu</th>
+                <th>Waktu</th>
                 <th>Pembeli</th>
-                <th>Item Dibeli</th>
-                <th>Total Jual</th>
+                <th>Item</th>
+                <th>Total</th>
                 <th>Modal</th>
                 <th>Untung</th>
                 <th>Bayar</th>
-                <th>Kembalian</th>
+                <th>Kembali</th>
               </tr>
             </thead>
             <tbody id="tbodyRiwayat"></tbody>
@@ -291,15 +285,43 @@
   <!-- Toast -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- Modal -->
+  <!-- Modal: Konfirmasi -->
   <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <div class="modal-icon" id="modalIcon">?</div>
+    <div class="modal" id="modalBox">
       <h3 class="modal-title" id="modalTitle">Konfirmasi</h3>
       <p class="modal-msg" id="modalMsg">Yakin?</p>
       <div class="modal-actions">
         <button class="btn btn-ghost" id="modalCancel">Batal</button>
-        <button class="btn btn-outline" id="modalConfirm">Ya, Lanjutkan</button>
+        <button class="btn btn-primary" id="modalConfirm">Ya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Produk Action (Edit/Hapus) -->
+  <div class="modal-overlay" id="produkModalOverlay">
+    <div class="modal produk-modal" id="produkModal">
+      <div class="pm-header">
+        <h3 class="pm-title" id="pmTitle">Produk</h3>
+        <button class="pm-close" id="pmClose">✕</button>
+      </div>
+      <div class="pm-info" id="pmInfo"></div>
+      <div class="pm-actions">
+        <button class="btn btn-primary btn-full" id="pmEdit">✏️ Edit Produk</button>
+        <button class="btn btn-danger-outline btn-full" id="pmDelete">🗑️ Hapus Produk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Tambah Kategori Baru -->
+  <div class="modal-overlay" id="katModalOverlay">
+    <div class="modal" id="katModal">
+      <h3 class="modal-title">Tambah Kategori Baru</h3>
+      <div class="form-group" style="margin:16px 0">
+        <input type="text" id="katBaruInput" placeholder="Nama kategori baru…" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="katCancel">Batal</button>
+        <button class="btn btn-primary" id="katSave">Simpan</button>
       </div>
     </div>
   </div>

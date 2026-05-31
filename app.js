@@ -868,7 +868,10 @@ function attachTransaksiRowClickHandlers() {
 }
 
 /* ── Show Detail Transaksi Modal ───────────────────────── */
+let currentTransaksi = null;
+
 function showDetailTransaksi(transaksi) {
+  currentTransaksi = transaksi; // Store untuk digunakan tombol delete/print
   const dt = new Date(transaksi.tanggal);
   const dtStr = dt.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })
               + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
@@ -940,6 +943,183 @@ document.getElementById('detailTransaksiOverlay').addEventListener('click', (e) 
     document.getElementById('detailTransaksiOverlay').classList.remove('open');
   }
 });
+
+// ── Delete Transaction ─────────────────────────────────
+document.getElementById('btnDetailHapus').addEventListener('click', async () => {
+  if (!currentTransaksi) return;
+  const ok = await confirmModal('Hapus Transaksi', `Transaksi dari "${currentTransaksi.pembeli}" akan dihapus dan stok dipulihkan?`);
+  if (!ok) return;
+
+  setLoading(true);
+  try {
+    const res = await apiPost({ 
+      action: 'delete_riwayat',
+      data: { items: currentTransaksi.items }
+    });
+    if (res.success) {
+      riwayatList = riwayatList.filter(r => r !== currentTransaksi);
+      if (res.produk) produkList = res.produk;
+      document.getElementById('detailTransaksiOverlay').classList.remove('open');
+      renderRiwayat();
+      updateBadge();
+      renderShopGrid(document.getElementById('searchTransaksi')?.value || '');
+      applyProdukFilter();
+      toast('Transaksi dihapus dan stok dipulihkan.', 'success');
+    } else {
+      toast(res.message || 'Gagal menghapus transaksi!', 'error');
+    }
+  } catch (e) {
+    console.error(e);
+    toast('Gagal terhubung!', 'error');
+  } finally {
+    setLoading(false);
+  }
+});
+
+// ── Print Receipt ──────────────────────────────────────
+document.getElementById('btnDetailCetak').addEventListener('click', () => {
+  if (!currentTransaksi) return;
+  printReceipt(currentTransaksi);
+});
+
+function printReceipt(transaksi) {
+  // Create a canvas for the receipt
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Receipt width: 80mm (roughly 320px at normal DPI), height varies
+  canvas.width = 320;
+  
+  const padding = 10;
+  const lineHeight = 16;
+  let y = padding;
+  
+  // Helper function to draw text
+  function drawText(text, fontSize = 12, weight = 'normal', align = 'left') {
+    ctx.font = `${weight} ${fontSize}px 'Outfit', Arial`;
+    ctx.textAlign = align;
+    ctx.fillStyle = '#000';
+    const x = align === 'center' ? canvas.width / 2 : padding;
+    ctx.fillText(text, x, y);
+    y += lineHeight;
+  }
+  
+  function drawLine() {
+    ctx.strokeStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(canvas.width - padding, y);
+    ctx.stroke();
+    y += 8;
+  }
+  
+  // Set initial height (will adjust after measuring)
+  const dt = new Date(transaksi.tanggal);
+  const dateStr = dt.toLocaleDateString('id-ID', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const timeStr = dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+  
+  // Estimate height based on items
+  const itemLines = transaksi.items.length * 2 + 15;
+  canvas.height = itemLines * lineHeight + padding * 2;
+  
+  // Redraw with adjusted context (color reset needed)
+  ctx.font = 'normal 12px Outfit, Arial';
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000';
+  y = padding;
+  
+  // Header
+  ctx.font = 'bold 16px Outfit, Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('NAYA GAME STUFF', canvas.width / 2, y);
+  y += lineHeight;
+  
+  ctx.font = 'normal 10px Outfit, Arial';
+  ctx.fillText('Point of Sale', canvas.width / 2, y);
+  y += lineHeight + 4;
+  
+  drawLine();
+  
+  // Transaction info
+  ctx.font = 'normal 11px Outfit, Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText(`Waktu: ${dateStr} ${timeStr}`, padding, y);
+  y += lineHeight;
+  ctx.fillText(`Pembeli: ${transaksi.pembeli}`, padding, y);
+  y += lineHeight + 4;
+  
+  drawLine();
+  
+  // Items
+  ctx.font = 'bold 11px Outfit, Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('Item', padding, y);
+  ctx.textAlign = 'right';
+  ctx.fillText('Harga', canvas.width - padding, y);
+  y += lineHeight;
+  
+  ctx.font = 'normal 10px Outfit, Arial';
+  transaksi.items.forEach(item => {
+    const itemName = item.nama.length > 20 ? item.nama.substring(0, 17) + '...' : item.nama;
+    ctx.textAlign = 'left';
+    ctx.fillText(`${itemName} x${item.qty}`, padding, y);
+    y += lineHeight * 0.8;
+    
+    ctx.textAlign = 'right';
+    ctx.fillText(fmt(item.hargaJual * item.qty), canvas.width - padding, y);
+    y += lineHeight;
+  });
+  
+  y += 4;
+  drawLine();
+  
+  // Summary
+  ctx.font = 'normal 11px Outfit, Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('Total:', padding, y);
+  ctx.textAlign = 'right';
+  ctx.fillText(fmt(transaksi.total), canvas.width - padding, y);
+  y += lineHeight;
+  
+  if (transaksi.bayar > 0) {
+    ctx.fillText(`Bayar: ${fmt(transaksi.bayar)}`, canvas.width - padding, y);
+    ctx.textAlign = 'left';
+    ctx.fillText('Pembayaran:', padding, y);
+    y += lineHeight;
+    
+    if (transaksi.kembalian > 0) {
+      ctx.fillText('Kembali:', padding, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(fmt(transaksi.kembalian), canvas.width - padding, y);
+      y += lineHeight;
+    }
+  }
+  
+  y += 8;
+  drawLine();
+  
+  // Footer
+  ctx.font = 'normal 10px Outfit, Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Terima kasih atas pembelian Anda!', canvas.width / 2, y);
+  y += lineHeight;
+  ctx.font = 'normal 9px Outfit, Arial';
+  ctx.fillText('Semoga produk awet & membawa keberuntungan', canvas.width / 2, y);
+  
+  // Convert to image and trigger download
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nota_${transaksi.pembeli.replace(/\s+/g, '_')}_${Date.now()}.jpeg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Nota berhasil diunduh!', 'success');
+  }, 'image/jpeg');
+}
 
 /* ── Download PDF ──────────────────────────────────────── */
 document.getElementById('btnDownloadPdf').addEventListener('click', () => {
@@ -1078,12 +1258,23 @@ document.getElementById('btnDownloadPdf').addEventListener('click', () => {
 
 document.getElementById('btnHapusRiwayat').addEventListener('click', async () => {
   if (!riwayatList.length) return;
-  const ok = await confirmModal('Hapus Semua', 'Semua riwayat transaksi akan dihapus permanen.');
+  const ok = await confirmModal('Hapus Semua', 'Semua riwayat transaksi akan dihapus dan stok dipulihkan.');
   if (!ok) return;
   setLoading(true);
   try {
-    const res = await apiPost({ action: 'delete_all_riwayat' });
-    if (res.success) { riwayatList = []; renderRiwayat(); toast('Riwayat dihapus.', 'info'); }
+    const res = await apiPost({ 
+      action: 'delete_all_riwayat',
+      data: { items: riwayatList.flatMap(r => r.items) } // Pass all items for stock restoration
+    });
+    if (res.success) { 
+      riwayatList = []; 
+      if (res.produk) produkList = res.produk;
+      renderRiwayat(); 
+      updateBadge();
+      renderShopGrid(document.getElementById('searchTransaksi')?.value || '');
+      applyProdukFilter();
+      toast('Semua riwayat dihapus dan stok dipulihkan.', 'info'); 
+    }
   } catch { toast('Gagal terhubung!', 'error'); }
   finally { setLoading(false); }
 });

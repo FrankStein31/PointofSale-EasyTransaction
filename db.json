@@ -9,7 +9,7 @@
             "id": "prod_1.77780329554E+12_528",
             "nama": "nana's",
             "kategori": "MLBB - Kelompok A",
-            "stok": 0,
+            "stok": 1,
             "hargaModal": 0,
             "hargaJual": 3000
         },
@@ -17,7 +17,7 @@
             "id": "prod_1.77780332147E+12_929",
             "nama": "harley's",
             "kategori": "MLBB - Kelompok A",
-            "stok": 0,
+            "stok": 1,
             "hargaModal": 0,
             "hargaJual": 3000
         },
@@ -258,41 +258,9 @@
         "515777681",
         "1508004467",
         "1972519681",
-        "Budi Santoso"
+        "Andi Test"
     ],
     "riwayat": [
-        {
-            "tanggal": "2026-05-31T14:02:00.000Z",
-            "pembeli": "Budi Santoso",
-            "items": [
-                {
-                    "produkId": "prod_1.77780329554E+12_528",
-                    "nama": "nana's",
-                    "qty": 1,
-                    "hargaJual": 3000,
-                    "hargaModal": 0,
-                    "subtotal": 3000,
-                    "modal": 0,
-                    "untung": 3000
-                },
-                {
-                    "produkId": "prod_1.77780332147E+12_929",
-                    "nama": "harley's",
-                    "qty": 1,
-                    "hargaJual": 3000,
-                    "hargaModal": 0,
-                    "subtotal": 3000,
-                    "modal": 0,
-                    "untung": 3000
-                }
-            ],
-            "total": 6000,
-            "totalModal": 0,
-            "totalUntung": 6000,
-            "bayar": 10000,
-            "kembalian": 4000,
-            "id": "trx_1780236193628_979"
-        },
         {
             "tanggal": "2026-05-28T11:07:00.000Z",
             "pembeli": "1972519681",

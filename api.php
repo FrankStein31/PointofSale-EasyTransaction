@@ -169,9 +169,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── Riwayat: Delete all ─────────────────────────────
     if ($action === 'delete_all_riwayat') {
+        // Restore stock for all items in all transactions
+        if (!empty($db['riwayat'])) {
+            foreach ($db['riwayat'] as $riwayat) {
+                if (!empty($riwayat['items'])) {
+                    foreach ($riwayat['items'] as $item) {
+                        $pid = (string)($item['produkId'] ?? '');
+                        $qty = (int)($item['qty'] ?? 0);
+                        foreach ($db['produk'] as $i => $p) {
+                            if ((string)$p['id'] === $pid) {
+                                $db['produk'][$i]['stok'] += $qty;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         $db['riwayat'] = [];
         writeDB($DB_FILE, $db);
-        respond(['success' => true, 'message' => 'Semua riwayat dihapus']);
+        respond(['success' => true, 'message' => 'Semua riwayat dihapus dan stok dipulihkan', 'produk' => $db['produk']]);
+    }
+
+    // ── Riwayat: Delete single ──────────────────────────
+    if ($action === 'delete_riwayat') {
+        $items = $body['data']['items'] ?? [];
+        
+        // Restore stock
+        if (!empty($items)) {
+            foreach ($items as $item) {
+                $pid = (string)($item['produkId'] ?? '');
+                $qty = (int)($item['qty'] ?? 0);
+                foreach ($db['produk'] as $i => $p) {
+                    if ((string)$p['id'] === $pid) {
+                        $db['produk'][$i]['stok'] += $qty;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Find and delete the transaction by matching items (since we don't have transaction ID in JS)
+        // We'll use a different approach: remove the first transaction that matches these items
+        $found = false;
+        foreach ($db['riwayat'] as $i => $riwayat) {
+            if (count($riwayat['items'] ?? []) === count($items)) {
+                // Check if items match by counting
+                $match = true;
+                foreach ($items as $item) {
+                    $itemMatch = false;
+                    foreach ($riwayat['items'] as $rItem) {
+                        if ((string)($rItem['produkId'] ?? '') === (string)($item['produkId'] ?? '') 
+                            && (int)($rItem['qty'] ?? 0) === (int)($item['qty'] ?? 0)) {
+                            $itemMatch = true;
+                            break;
+                        }
+                    }
+                    if (!$itemMatch) { $match = false; break; }
+                }
+                if ($match) {
+                    array_splice($db['riwayat'], $i, 1);
+                    $found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$found) {
+            respond(['success' => false, 'message' => 'Transaksi tidak ditemukan'], 404);
+        }
+
+        writeDB($DB_FILE, $db);
+        respond(['success' => true, 'message' => 'Transaksi dihapus dan stok dipulihkan', 'produk' => $db['produk']]);
     }
 
     respond(['success' => false, 'message' => 'Action tidak dikenal'], 400);

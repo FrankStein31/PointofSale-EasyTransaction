@@ -818,8 +818,128 @@ function renderRiwayat() {
     if (!$tbl.parent().hasClass('table-responsive')) {
       $tbl.wrap('<div class="table-responsive" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;"></div>');
     }
+
+    // ── Add click handlers untuk detail transaksi dengan event delegation ─────
+    attachTransaksiRowClickHandlers();
   }
 }
+
+/* ── Attach Transaksi Row Click Handlers ───────────────── */
+function attachTransaksiRowClickHandlers() {
+  const table = document.getElementById('tableRiwayat');
+  
+  // Use event delegation on the table
+  table.addEventListener('click', (e) => {
+    const row = e.target.closest('tbody tr');
+    if (row) {
+      // Get all visible rows in the current page
+      const allRows = document.querySelectorAll('#tbodyRiwayat tr');
+      let rowIndex = -1;
+      
+      // Find which filtered item this row corresponds to
+      // We need to find the row number from the first column
+      const firstCol = row.querySelector('td:first-child');
+      if (firstCol) {
+        const rowNum = parseInt(firstCol.textContent.trim());
+        if (rowNum > 0) {
+          // rowNum is 1-indexed, so subtract 1
+          const filteredList = filterByRange(riwayatList);
+          if (rowNum <= filteredList.length) {
+            showDetailTransaksi(filteredList[rowNum - 1]);
+          }
+        }
+      }
+    }
+  });
+
+  // Add hover effect to all rows
+  setTimeout(() => {
+    const rows = document.querySelectorAll('#tbodyRiwayat tr');
+    rows.forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('mouseenter', () => {
+        row.style.backgroundColor = 'rgba(255, 92, 141, 0.05)';
+      });
+      row.addEventListener('mouseleave', () => {
+        row.style.backgroundColor = '';
+      });
+    });
+  }, 50);
+}
+
+/* ── Show Detail Transaksi Modal ───────────────────────── */
+function showDetailTransaksi(transaksi) {
+  const dt = new Date(transaksi.tanggal);
+  const dtStr = dt.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })
+              + ' ' + dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+
+  document.getElementById('dtWaktu').textContent = dtStr;
+  document.getElementById('dtPembeli').textContent = transaksi.pembeli;
+  
+  // Status pembayaran
+  const statusBayar = transaksi.bayar > 0 ? `Bayar Rp ${fmt(transaksi.bayar).replace('Rp\u00A0', '')}` : 'Pas';
+  document.getElementById('dtStatusBayar').textContent = statusBayar;
+
+  // Render produk list
+  const produkListHtml = transaksi.items.map(item => {
+    const subtotal = item.hargaJual * item.qty;
+    const subtotalModal = (item.hargaModal || 0) * item.qty;
+    const keuntunganItem = subtotal - subtotalModal;
+    return `
+      <div class="produk-item">
+        <div class="produk-item-nama">📦 ${item.nama}</div>
+        <div class="produk-item-detail">
+          <span>Jumlah:</span>
+          <strong>${item.qty} pcs</strong>
+        </div>
+        <div class="produk-item-detail">
+          <span>Harga/Pcs:</span>
+          <strong>${fmt(item.hargaJual)}</strong>
+        </div>
+        ${item.hargaModal > 0 ? `
+        <div class="produk-item-detail">
+          <span>Modal/Pcs:</span>
+          <strong>${fmt(item.hargaModal)}</strong>
+        </div>
+        ` : ''}
+        <div class="produk-item-harga">
+          <span>Subtotal:</span>
+          <span class="produk-item-total">${fmt(subtotal)}</span>
+        </div>
+        ${item.hargaModal > 0 ? `
+        <div class="produk-item-harga" style="border-top: none; padding-top: 0; margin-top: 4px;">
+          <span style="color: var(--text2); font-size: .75rem;">Untung:</span>
+          <span style="color: var(--accent); font-weight: 600; font-size: .85rem;">+${fmt(keuntunganItem)}</span>
+        </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('dtProdukList').innerHTML = produkListHtml;
+
+  // Totals
+  document.getElementById('dtTotalModal').textContent = transaksi.totalModal > 0 ? fmt(transaksi.totalModal) : '—';
+  document.getElementById('dtTotalPenjualan').textContent = fmt(transaksi.total);
+  document.getElementById('dtTotalKeuntungan').textContent = transaksi.totalUntung > 0 ? `+${fmt(transaksi.totalUntung)}` : fmt(transaksi.totalUntung);
+
+  // Pembayaran
+  document.getElementById('dtJumlahBayar').textContent = transaksi.bayar > 0 ? fmt(transaksi.bayar) : 'Pas';
+  document.getElementById('dtKembalian').textContent = transaksi.kembalian > 0 ? fmt(transaksi.kembalian) : '—';
+
+  // Show modal
+  document.getElementById('detailTransaksiOverlay').classList.add('open');
+}
+
+// ── Close Detail Modal ─────────────────────────────────
+document.getElementById('detailTransaksiClose').addEventListener('click', () => {
+  document.getElementById('detailTransaksiOverlay').classList.remove('open');
+});
+document.getElementById('detailTransaksiOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('detailTransaksiOverlay')) {
+    document.getElementById('detailTransaksiOverlay').classList.remove('open');
+  }
+});
 
 /* ── Download PDF ──────────────────────────────────────── */
 document.getElementById('btnDownloadPdf').addEventListener('click', () => {

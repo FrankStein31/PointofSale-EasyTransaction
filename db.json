@@ -1,10 +1,581 @@
 {
     "kategori": [
+        "MLBB - Kelompok A",
+        "MLBB - Kelompok B",
+        "MLBB - Kelompok C"
     ],
     "produk": [
+        {
+            "id": "prod_1.77780329554E+12_528",
+            "nama": "nana's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 0,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780332147E+12_929",
+            "nama": "harley's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 0,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780336374E+12_228",
+            "nama": "angela's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780337764E+12_304",
+            "nama": "kagura's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780343243E+12_953",
+            "nama": "diggie's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780362064E+12_555",
+            "nama": "adorable",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 3,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780364481E+12_435",
+            "nama": "haunted doll's",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780366129E+12_806",
+            "nama": "lucky straw",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780369177E+12_522",
+            "nama": "no. 10 jersey",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 8,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780370471E+12_352",
+            "nama": "allstar",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 11,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780373346E+12_931",
+            "nama": "airship",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780374996E+12_640",
+            "nama": "racing helmet",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780377713E+12_892",
+            "nama": "lucky keychain",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780379025E+12_775",
+            "nama": "kachousen",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 3,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780381513E+12_474",
+            "nama": "blessing",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 8,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        },
+        {
+            "id": "prod_1.77780384096E+12_230",
+            "nama": "empire",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 100,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780386569E+12_572",
+            "nama": "battle buddy",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 39,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780388023E+12_526",
+            "nama": "colored minion",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 15,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780390745E+12_855",
+            "nama": "8th anniv",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 38,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780391934E+12_201",
+            "nama": "make out",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 61,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780393456E+12_184",
+            "nama": "kunai",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 54,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780395714E+12_901",
+            "nama": "headband",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 54,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780397095E+12_670",
+            "nama": "missile",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 84,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780398505E+12_530",
+            "nama": "abyssal",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 21,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780399764E+12_134",
+            "nama": "9th",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 19,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780401364E+12_241",
+            "nama": "mikasa's",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 6,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780402807E+12_778",
+            "nama": "krabby patty",
+            "kategori": "MLBB - Kelompok B",
+            "stok": 16,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780407407E+12_259",
+            "nama": "agate",
+            "kategori": "MLBB - Kelompok C",
+            "stok": 100,
+            "hargaModal": 0,
+            "hargaJual": 500
+        },
+        {
+            "id": "prod_1.77780409168E+12_829",
+            "nama": "layla's",
+            "kategori": "MLBB - Kelompok C",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 1500
+        },
+        {
+            "id": "prod_1.77780412164E+12_435",
+            "nama": "starlight wish",
+            "kategori": "MLBB - Kelompok C",
+            "stok": 15,
+            "hargaModal": 0,
+            "hargaJual": 2500
+        },
+        {
+            "id": "prod_1.7800204717E+12_603",
+            "nama": "skywhale",
+            "kategori": "MLBB - Kelompok A",
+            "stok": 1,
+            "hargaModal": 0,
+            "hargaJual": 3000
+        }
     ],
     "pelanggan": [
+        "515777681",
+        "1508004467",
+        "1972519681",
+        "Budi Santoso"
     ],
     "riwayat": [
+        {
+            "tanggal": "2026-05-31T14:02:00.000Z",
+            "pembeli": "Budi Santoso",
+            "items": [
+                {
+                    "produkId": "prod_1.77780329554E+12_528",
+                    "nama": "nana's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780332147E+12_929",
+                    "nama": "harley's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                }
+            ],
+            "total": 6000,
+            "totalModal": 0,
+            "totalUntung": 6000,
+            "bayar": 10000,
+            "kembalian": 4000,
+            "id": "trx_1780236193628_979"
+        },
+        {
+            "tanggal": "2026-05-28T11:07:00.000Z",
+            "pembeli": "1972519681",
+            "items": [
+                {
+                    "produkId": "prod_1.77780329554E+12_528",
+                    "nama": "nana's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780332147E+12_929",
+                    "nama": "harley's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780336374E+12_228",
+                    "nama": "angela's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780343243E+12_953",
+                    "nama": "diggie's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780362064E+12_555",
+                    "nama": "adorable",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780369177E+12_522",
+                    "nama": "no. 10 jersey",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780370471E+12_352",
+                    "nama": "allstar",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780373346E+12_931",
+                    "nama": "airship",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780374996E+12_640",
+                    "nama": "racing helmet",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780377713E+12_892",
+                    "nama": "lucky keychain",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780379025E+12_775",
+                    "nama": "kachousen",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780381513E+12_474",
+                    "nama": "blessing",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780364481E+12_435",
+                    "nama": "haunted doll's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780366129E+12_806",
+                    "nama": "lucky straw",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780337764E+12_304",
+                    "nama": "kagura's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.7800204717E+12_603",
+                    "nama": "skywhale",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                }
+            ],
+            "total": 48000,
+            "totalModal": 0,
+            "totalUntung": 48000,
+            "bayar": 48000,
+            "kembalian": 0,
+            "id": "trx_1.78002051946E+12_126"
+        },
+        {
+            "tanggal": "2026-05-03T10:19:00.000Z",
+            "pembeli": "1508004467",
+            "items": [
+                {
+                    "produkId": "prod_1.77780381513E+12_474",
+                    "nama": "blessing",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780364481E+12_435",
+                    "nama": "haunted doll's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780362064E+12_555",
+                    "nama": "adorable",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780337764E+12_304",
+                    "nama": "kagura's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780366129E+12_806",
+                    "nama": "lucky straw",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780391934E+12_201",
+                    "nama": "make out",
+                    "qty": 2,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 1000,
+                    "modal": 0,
+                    "untung": 1000
+                },
+                {
+                    "produkId": "prod_1.77780393456E+12_184",
+                    "nama": "kunai",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780395714E+12_901",
+                    "nama": "headband",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780402807E+12_778",
+                    "nama": "krabby patty",
+                    "qty": 2,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 1000,
+                    "modal": 0,
+                    "untung": 1000
+                },
+                {
+                    "produkId": "prod_1.77780401364E+12_241",
+                    "nama": "mikasa's",
+                    "qty": 2,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 1000,
+                    "modal": 0,
+                    "untung": 1000
+                }
+            ],
+            "total": 19000,
+            "totalModal": 0,
+            "totalUntung": 19000,
+            "bayar": 19000,
+            "kembalian": 0,
+            "id": "trx_1.77780425644E+12_607"
+        }
     ]
 }

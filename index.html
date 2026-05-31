@@ -212,9 +212,9 @@
 
             <div class="cart-pay">
               <div class="form-group">
-                <label for="namaPembeli">Nama Pembeli</label>
+                <label for="namaPembeli">Nama atau ID Pembeli</label>
                 <div class="autocomplete-wrap" id="pembeliAutocomplete">
-                  <input type="text" id="namaPembeli" placeholder="Ketik nama…" autocomplete="off" />
+                  <input type="text" id="namaPembeli" placeholder="Ketik nama atau ID pembeli…" autocomplete="off" />
                   <div class="ac-dropdown" id="pembeliDropdown"></div>
                 </div>
               </div>
@@ -381,6 +381,61 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" id="katCancel">Batal</button>
         <button class="btn btn-primary" id="katSave">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detail Transaksi -->
+  <div class="modal-overlay" id="detailTransaksiOverlay">
+    <div class="modal detail-transaksi-modal" id="detailTransaksiModal">
+      <div class="pm-header">
+        <h3 class="pm-title">Detail Transaksi</h3>
+        <button class="pm-close" id="detailTransaksiClose">✕</button>
+      </div>
+      <div class="detail-transaksi-body">
+        <div class="detail-row">
+          <span class="detail-label">Waktu Transaksi</span>
+          <span class="detail-value" id="dtWaktu">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Nama Pembeli</span>
+          <span class="detail-value" id="dtPembeli">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status Pembayaran</span>
+          <span class="detail-value" id="dtStatusBayar">—</span>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <h4 style="margin: 0 0 12px 0; font-size: .9rem; font-weight: 600;">📦 Produk yang Dibeli</h4>
+          <div id="dtProdukList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div class="detail-row">
+            <span class="detail-label">Total Modal</span>
+            <span class="detail-value" id="dtTotalModal">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Total Penjualan</span>
+            <span class="detail-value" id="dtTotalPenjualan">—</span>
+          </div>
+          <div class="detail-row" style="font-weight: 600; font-size: 1.05rem; margin-top: 8px;">
+            <span class="detail-label">Total Keuntungan</span>
+            <span class="detail-value accent" id="dtTotalKeuntungan">—</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div class="detail-row">
+            <span class="detail-label">Jumlah Dibayar</span>
+            <span class="detail-value" id="dtJumlahBayar">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Uang Kembalian</span>
+            <span class="detail-value" id="dtKembalian">—</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

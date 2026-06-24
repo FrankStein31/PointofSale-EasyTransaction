@@ -294,6 +294,78 @@ body {
   transform: translateY(-50%); color: var(--text3);
   pointer-events: none; font-size: .8rem;
 }
+.select-combo .select2-container + select + ::after,
+.select-combo:has(.select2-container)::after {
+  display: none;
+}
+
+/* ── Select2 Overrides ───────────────────────────────── */
+.select2-container {
+  width: 100% !important;
+}
+.select2-container--default .select2-selection--single {
+  min-height: 41px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+  display: flex;
+  align-items: center;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .9rem;
+  padding-left: 14px;
+  padding-right: 30px;
+  line-height: normal;
+  width: 100%;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.select2-container--default.select2-container--open .select2-selection--single,
+.select2-container--default .select2-selection--single:focus {
+  border-color: var(--black);
+  outline: none;
+}
+.select2-dropdown {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font);
+  font-size: .9rem;
+  z-index: 1050;
+}
+.select2-search--dropdown {
+  padding: 8px;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: var(--font);
+  font-size: .85rem;
+  outline: none;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+  border-color: var(--text3);
+}
+.select2-container--default .select2-results__option {
+  padding: 8px 14px;
+}
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+  background-color: var(--bg);
+  color: var(--text);
+}
+.select2-container--default .select2-results__option--selected {
+  background-color: var(--bg2);
+}
+
 
 .form-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 

@@ -127,6 +127,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         respond(['success' => true, 'data' => $db['kategori']]);
     }
 
+    // ── Kategori: Update ────────────────────────────────
+    if ($action === 'update_kategori') {
+        $old = trim($body['old'] ?? '');
+        $new = trim($body['new'] ?? '');
+        if ($old === '' || $new === '') respond(['success' => false, 'message' => 'Nama kategori tidak valid'], 400);
+
+        $idx = array_search($old, $db['kategori']);
+        if ($idx !== false) {
+            $db['kategori'][$idx] = $new;
+            // Update all products with this category
+            foreach ($db['produk'] as $i => $p) {
+                if (($p['kategori'] ?? '') === $old) {
+                    $db['produk'][$i]['kategori'] = $new;
+                }
+            }
+            writeDB($DB_FILE, $db);
+        }
+        respond(['success' => true, 'data' => $db['kategori'], 'produk' => $db['produk']]);
+    }
+
+    // ── Kategori: Delete ────────────────────────────────
+    if ($action === 'delete_kategori') {
+        $nama = trim($body['nama'] ?? '');
+        if ($nama === '') respond(['success' => false, 'message' => 'Nama kategori kosong'], 400);
+        
+        $idx = array_search($nama, $db['kategori']);
+        if ($idx !== false) {
+            array_splice($db['kategori'], $idx, 1);
+            // Optionally remove category from products
+            foreach ($db['produk'] as $i => $p) {
+                if (($p['kategori'] ?? '') === $nama) {
+                    $db['produk'][$i]['kategori'] = '';
+                }
+            }
+            writeDB($DB_FILE, $db);
+        }
+        respond(['success' => true, 'data' => $db['kategori'], 'produk' => $db['produk']]);
+    }
+
     // ── Pelanggan: Add (auto from transaksi) ────────────
     if ($action === 'add_pelanggan') {
         $nama = trim($body['nama'] ?? '');

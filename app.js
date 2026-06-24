@@ -105,6 +105,11 @@ document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
 ══════════════════════════════════════════════════════════ */
 function renderKategoriDropdown(selectEl, selected = '') {
   if (!selectEl) return;
+  
+  if ($(selectEl).data('select2')) {
+    $(selectEl).select2('destroy');
+  }
+
   selectEl.innerHTML = '<option value="">Pilih kategori…</option>';
   kategoriList.forEach(k => {
     const opt = document.createElement('option');
@@ -118,6 +123,24 @@ function renderKategoriDropdown(selectEl, selected = '') {
   addOpt.textContent = '+ Tambah kategori baru…';
   addOpt.style.fontWeight = '600';
   selectEl.appendChild(addOpt);
+
+  $(selectEl).select2({
+    templateResult: function (data) {
+      if (!data.id || data.id === '__add_new__' || data.id === '') {
+        return data.text;
+      }
+      var $result = $(
+        '<div style="display:flex; justify-content:space-between; align-items:center; padding-right:8px;">' +
+          '<span>' + data.text + '</span>' +
+          '<div style="display:flex; gap:4px;">' +
+            '<button class="btn btn-ghost btn-sm btn-edit-kat" style="padding:2px 6px; font-size:12px; height:auto; min-height:unset;" data-kat="' + data.text + '">✏️</button>' +
+            '<button class="btn btn-danger-outline btn-sm btn-del-kat" style="padding:2px 6px; font-size:12px; height:auto; min-height:unset;" data-kat="' + data.text + '">🗑️</button>' +
+          '</div>' +
+        '</div>'
+      );
+      return $result;
+    }
+  });
 }
 
 function renderFilterKategori() {
@@ -131,39 +154,90 @@ function renderFilterKategori() {
 }
 
 // Handle "add new" in category select
-document.getElementById('kategoriProduk').addEventListener('change', e => {
-  if (e.target.value === '__add_new__') {
-    e.target.value = '';
+$('#kategoriProduk').on('change', function(e) {
+  if (this.value === '__add_new__') {
+    $(this).val(null).trigger('change.select2');
     openKatModal();
   }
 });
 
+$(document).on('mouseup', '.btn-edit-kat', function(e) {
+  e.stopPropagation();
+  const kat = $(this).data('kat');
+  setTimeout(() => { $('#kategoriProduk').select2('close'); }, 10);
+  openEditKatModal(kat);
+});
+
+$(document).on('mouseup', '.btn-del-kat', async function(e) {
+  e.stopPropagation();
+  const kat = $(this).data('kat');
+  setTimeout(() => { $('#kategoriProduk').select2('close'); }, 10);
+  
+  const ok = await confirmModal('Hapus Kategori', `Yakin ingin menghapus kategori "${kat}"?`);
+  if (!ok) return;
+  setLoading(true);
+  try {
+    const res = await apiPost({ action: 'delete_kategori', nama: kat });
+    if (res.success) {
+      kategoriList = res.data;
+      if (res.produk) produkList = res.produk;
+      renderKategoriDropdown(document.getElementById('kategoriProduk'));
+      renderFilterKategori();
+      applyProdukFilter();
+      toast(`Kategori "${kat}" dihapus.`, 'info');
+    }
+  } catch { toast('Gagal menghapus!', 'error'); }
+  finally { setLoading(false); }
+});
+
 // ── Kategori Modal ──
 function openKatModal() {
+  document.getElementById('katOldInput').value = '';
   document.getElementById('katBaruInput').value = '';
+  document.getElementById('katModalTitle').textContent = 'Tambah Kategori Baru';
   document.getElementById('katModalOverlay').classList.add('open');
   setTimeout(() => document.getElementById('katBaruInput').focus(), 80);
 }
+
+function openEditKatModal(kat) {
+  document.getElementById('katOldInput').value = kat;
+  document.getElementById('katBaruInput').value = kat;
+  document.getElementById('katModalTitle').textContent = 'Edit Kategori';
+  document.getElementById('katModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('katBaruInput').focus(), 80);
+}
+
 document.getElementById('katCancel').onclick = () => {
   document.getElementById('katModalOverlay').classList.remove('open');
 };
+
 document.getElementById('katSave').onclick = async () => {
+  const old = document.getElementById('katOldInput').value;
   const nama = document.getElementById('katBaruInput').value.trim();
   if (!nama) return;
   setLoading(true);
   try {
-    const res = await apiPost({ action: 'add_kategori', nama });
+    let res;
+    if (old) {
+      res = await apiPost({ action: 'update_kategori', old, new: nama });
+    } else {
+      res = await apiPost({ action: 'add_kategori', nama });
+    }
     if (res.success) {
       kategoriList = res.data;
+      if (res.produk) produkList = res.produk;
       renderKategoriDropdown(document.getElementById('kategoriProduk'), nama);
       document.getElementById('kategoriProduk').value = nama;
+      $('#kategoriProduk').trigger('change.select2');
       renderFilterKategori();
-      toast(`Kategori "${nama}" ditambahkan.`, 'success');
+      applyProdukFilter();
+      toast(old ? `Kategori diperbarui.` : `Kategori "${nama}" ditambahkan.`, 'success');
     }
   } catch { toast('Gagal menyimpan kategori!', 'error'); }
   finally { setLoading(false); }
   document.getElementById('katModalOverlay').classList.remove('open');
 };
+
 // Submit on Enter in modal
 document.getElementById('katBaruInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); document.getElementById('katSave').click(); }

@@ -153,7 +153,7 @@
             "id": "prod_1.77780390745E+12_855",
             "nama": "8th anniv",
             "kategori": "MLBB - Kelompok B",
-            "stok": 38,
+            "stok": 37,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -161,7 +161,7 @@
             "id": "prod_1.77780391934E+12_201",
             "nama": "make out",
             "kategori": "MLBB - Kelompok B",
-            "stok": 61,
+            "stok": 72,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -169,7 +169,7 @@
             "id": "prod_1.77780393456E+12_184",
             "nama": "kunai",
             "kategori": "MLBB - Kelompok B",
-            "stok": 54,
+            "stok": 65,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -177,7 +177,7 @@
             "id": "prod_1.77780395714E+12_901",
             "nama": "headband",
             "kategori": "MLBB - Kelompok B",
-            "stok": 54,
+            "stok": 64,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -185,7 +185,7 @@
             "id": "prod_1.77780397095E+12_670",
             "nama": "missile",
             "kategori": "MLBB - Kelompok B",
-            "stok": 84,
+            "stok": 85,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -193,7 +193,7 @@
             "id": "prod_1.77780398505E+12_530",
             "nama": "abyssal",
             "kategori": "MLBB - Kelompok B",
-            "stok": 21,
+            "stok": 20,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -201,7 +201,7 @@
             "id": "prod_1.77780399764E+12_134",
             "nama": "9th",
             "kategori": "MLBB - Kelompok B",
-            "stok": 19,
+            "stok": 18,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -209,7 +209,7 @@
             "id": "prod_1.77780401364E+12_241",
             "nama": "mikasa's",
             "kategori": "MLBB - Kelompok B",
-            "stok": 6,
+            "stok": 5,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -217,7 +217,7 @@
             "id": "prod_1.77780402807E+12_778",
             "nama": "krabby patty",
             "kategori": "MLBB - Kelompok B",
-            "stok": 16,
+            "stok": 15,
             "hargaModal": 0,
             "hargaJual": 500
         },
@@ -258,9 +258,114 @@
         "515777681",
         "1508004467",
         "1972519681",
-        "Andi Test"
+        "1742455733",
+        "1694389750"
     ],
     "riwayat": [
+        {
+            "tanggal": "2026-06-21T13:38:00.000Z",
+            "pembeli": "1694389750",
+            "items": [
+                {
+                    "produkId": "prod_1.77780336374E+12_228",
+                    "nama": "angela's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                },
+                {
+                    "produkId": "prod_1.77780337764E+12_304",
+                    "nama": "kagura's",
+                    "qty": 1,
+                    "hargaJual": 3000,
+                    "hargaModal": 0,
+                    "subtotal": 3000,
+                    "modal": 0,
+                    "untung": 3000
+                }
+            ],
+            "total": 6000,
+            "totalModal": 0,
+            "totalUntung": 6000,
+            "bayar": 6000,
+            "kembalian": 0,
+            "id": "trx_1.78204914828E+12_718"
+        },
+        {
+            "tanggal": "2026-06-04T15:58:00.000Z",
+            "pembeli": "1742455733",
+            "items": [
+                {
+                    "produkId": "prod_1.77780402807E+12_778",
+                    "nama": "krabby patty",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780399764E+12_134",
+                    "nama": "9th",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780390745E+12_855",
+                    "nama": "8th anniv",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780401364E+12_241",
+                    "nama": "mikasa's",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780398505E+12_530",
+                    "nama": "abyssal",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                },
+                {
+                    "produkId": "prod_1.77780397095E+12_670",
+                    "nama": "missile",
+                    "qty": 1,
+                    "hargaJual": 500,
+                    "hargaModal": 0,
+                    "subtotal": 500,
+                    "modal": 0,
+                    "untung": 500
+                }
+            ],
+            "total": 3000,
+            "totalModal": 0,
+            "totalUntung": 3000,
+            "bayar": 3000,
+            "kembalian": 0,
+            "id": "trx_1.78074580855E+12_344"
+        },
         {
             "tanggal": "2026-05-28T11:07:00.000Z",
             "pembeli": "1972519681",
